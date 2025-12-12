@@ -19,7 +19,27 @@ A cozy, Christmas-themed family photo album and memory sharing web application b
 - Node.js 18+ installed
 - npm or yarn package manager
 
-### Installation
+### First-Time Setup (Run These Commands in Order)
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Create database and run migrations
+npm run db:migrate
+
+# 3. (Optional) Add sample data
+npm run db:seed
+
+# 4. Start the development server
+npm run dev
+```
+
+Then open [http://localhost:3000](http://localhost:3000) in your browser!
+
+**Note:** If you see "database file not found" errors, make sure you've run `npm run db:migrate` first. The SQLite database file will be created automatically.
+
+### Installation (Detailed Steps)
 
 1. **Clone or download this project**
 
@@ -32,22 +52,38 @@ A cozy, Christmas-themed family photo album and memory sharing web application b
    
    Create a `.env` file in the root directory with the following content:
    ```env
-   DATABASE_URL="file:./dev.db"
+   DATABASE_URL="file:./prisma/dev.db"
    SITE_PASSWORD="your-secure-password-here"
    ```
    
    Replace `"your-secure-password-here"` with your desired family password.
-
-4. **Set up the database:**
-   ```bash
-   npm run db:generate
-   npm run db:push
+   
+   **Example `.env` file:**
+   ```env
+   DATABASE_URL="file:./prisma/dev.db"
+   SITE_PASSWORD="family2024"
    ```
+   
+   **Note:** The `.env` file is not committed to git (it's in `.gitignore`). Create it manually or copy from `.env.example` if available.
 
-5. **Seed the database (optional, for sample data):**
+4. **Set up the database (creates SQLite database file):**
+   ```bash
+   npm run db:migrate
+   ```
+   
+   This will:
+   - Generate Prisma client
+   - Create the SQLite database file at `prisma/dev.db`
+   - Set up all database tables
+   
+   **Important:** If you see "database file not found" errors, run `npm run db:migrate` first.
+
+5. **Seed the database (optional, adds sample data):**
    ```bash
    npm run db:seed
    ```
+   
+   This adds sample notes, events, and memories to get you started.
 
 6. **Start the development server:**
    ```bash
@@ -58,7 +94,7 @@ A cozy, Christmas-themed family photo album and memory sharing web application b
    
    Navigate to [http://localhost:3000](http://localhost:3000)
    
-   You'll be prompted for the password you set in `.env`.
+   You'll be prompted for the password you set in `.env` (default: `family2024` if using `.env.example`).
 
 ## 📁 Project Structure
 
@@ -105,11 +141,19 @@ Restart the server for changes to take effect.
 
 ### Database Location
 
-By default, SQLite database is stored at `prisma/dev.db`. You can change this in `.env`:
+By default, SQLite database is stored at `prisma/dev.db`. This is a **file-based database** - no external database server needed!
+
+You can change the location in `.env`:
 
 ```env
 DATABASE_URL="file:./path/to/your/database.db"
 ```
+
+**Important Notes:**
+- SQLite is file-based - the database is just a file on your computer
+- No external database setup required
+- If you see database errors, make sure you've run `npm run db:migrate` first
+- The database file (`prisma/dev.db`) will be created automatically when you run migrations
 
 ## 📸 Photo Uploads
 
@@ -201,21 +245,36 @@ To use PostgreSQL instead of SQLite:
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm run db:migrate` - Create database migrations (run this first!)
 - `npm run db:generate` - Generate Prisma client
-- `npm run db:push` - Push schema changes to database
+- `npm run db:push` - Push schema changes to database (alternative to migrate)
 - `npm run db:seed` - Seed database with sample data
+- `npm run db:studio` - Open Prisma Studio to view/edit database
 
 ### Real-time Updates
 
-The app uses client-side polling (every 5 seconds) to update content in real-time. All pages automatically refresh their data:
+The app uses client-side polling (every 5 seconds) to update content in real-time. All pages automatically refresh their data without manual page refresh:
 
-- **Home page**: Shows recent notes, events, and photos
-- **Notes page**: Refreshes note list
-- **Photos page**: Refreshes photo gallery
-- **Timeline page**: Refreshes memories
-- **Calendar page**: Refreshes events
+- **Home page**: Shows recent notes, events, and photos (server-rendered, updates on navigation)
+- **Notes page**: Auto-refreshes note list every 5 seconds
+- **Photos page**: Auto-refreshes photo gallery every 5 seconds
+- **Timeline page**: Auto-refreshes memories every 5 seconds
+- **Calendar page**: Auto-refreshes events every 5 seconds
+
+When someone uploads a photo or adds a note/event/memory, all other users will see it within 5 seconds automatically!
 
 ## 🎨 Customization
+
+### Christmas Theme
+
+The app includes:
+- **Snowfall animation** on every page
+- **Holiday border decorations** (lights, holly, ornaments)
+- **Warm Christmas color palette** (reds, greens, golds)
+- **Fun Christmas movie references** (text only, no copyrighted media):
+  - "The best way to spread Christmas cheer is singing loud for all to hear." - Elf
+  - "Merry Christmas, ya filthy animal." - Home Alone
+  - And more throughout the app!
 
 ### Christmas Theme Colors
 
@@ -247,6 +306,47 @@ expiresAt.setDate(expiresAt.getDate() + 30); // Change 30 to your desired days
 - All routes require authentication except `/login` and API routes
 - File uploads are restricted to authenticated users
 - Consider using environment-specific secrets for production
+
+## 🐛 Troubleshooting
+
+### "Database file not found" or "SQLITE_CANTOPEN" error
+
+**Solution:** Run the database migration:
+```bash
+npm run db:migrate
+```
+
+This will create the SQLite database file at `prisma/dev.db`.
+
+### "Prisma Client not generated" error
+
+**Solution:** Generate the Prisma client:
+```bash
+npm run db:generate
+```
+
+Or run `npm install` which automatically generates it via the `postinstall` script.
+
+### Photos not uploading
+
+**Check:**
+1. Make sure the `uploads/photos/` directory exists (it's created automatically)
+2. Check file permissions
+3. Verify you're logged in (check for authentication cookie)
+
+### Real-time updates not working
+
+**Check:**
+1. Make sure JavaScript is enabled in your browser
+2. Check browser console for errors
+3. Polling runs every 5 seconds - wait a few seconds after someone adds content
+
+### Can't access the site
+
+**Check:**
+1. Make sure the dev server is running: `npm run dev`
+2. Visit `http://localhost:3000` (not `https://`)
+3. Check that port 3000 is not in use by another application
 
 ## 📝 License
 
