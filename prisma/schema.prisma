@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  author    String
+  content   String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+model Photo {
+  id         String   @id @default(cuid())
+  fileName   String
+  filePath   String
+  uploadedBy String
+  caption    String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Memory {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  date        DateTime
+  photoId     String?
+  createdAt   DateTime @default(now())
+
+  @@index([date])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  dateTime    DateTime
+  createdBy   String?
+  createdAt   DateTime @default(now())
+
+  @@index([dateTime])
+}
+

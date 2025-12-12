@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-red-50 via-amber-50 to-green-50 min-h-screen;
+  }
+}
+
+@layer components {
+  .christmas-border {
+    @apply relative;
+  }
+  
+  .christmas-border::before {
+    content: '';
+    @apply absolute inset-0 border-4 border-christmas-red rounded-lg;
+    background-image: 
+      repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(196, 30, 58, 0.1) 10px, rgba(196, 30, 58, 0.1) 20px),
+      repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(34, 139, 34, 0.1) 10px, rgba(34, 139, 34, 0.1) 20px);
+  }
+  
+  .snowflake {
+    @apply absolute text-white opacity-75;
+    animation: snow 20s linear infinite;
+    pointer-events: none;
+  }
+  
+  .sticky-note {
+    @apply bg-gradient-to-br from-yellow-100 to-yellow-50 p-4 rounded-lg shadow-lg transform rotate-1 hover:rotate-0 transition-transform;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+  
+  .sticky-note-alt {
+    @apply bg-gradient-to-br from-green-100 to-green-50 p-4 rounded-lg shadow-lg transform -rotate-1 hover:rotate-0 transition-transform;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+  
+  .sticky-note-red {
+    @apply bg-gradient-to-br from-red-100 to-red-50 p-4 rounded-lg shadow-lg transform rotate-1 hover:rotate-0 transition-transform;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+}
+
